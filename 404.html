@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="referrer" content="strict-origin-when-cross-origin">
+ <meta name="description" content="解題阿福數學逐題教室：依考卷與題號找題目，查看完整逐步詳解、解題圖與黑板教學影片。從數與式、集合到代數與方程式，慢慢弄懂每一步。">
+ <meta name="theme-color" content="#173c34"><title>解題阿福｜數學逐題教室</title>
+ <link rel="stylesheet" href="style.css"><script defer src="course-data.js"></script><script defer src="app.js"></script>
+</head>
+<body>
+ <a class="skip" href="#lesson">跳到題目與詳解</a>
+ <header class="topbar"><a class="brand" href="#"><span class="brand-mark" aria-hidden="true">福</span><span>解題阿福<small>數學逐題教室</small></span></a><span class="topnote">一題一題，把觀念弄懂。</span><button type="button" id="print" class="quiet">列印本題</button></header>
+ <section class="hero"><div><p class="eyebrow">MATH, ONE STEP AT A TIME</p><h1>卡住的那一題，<br><span>一起慢慢解。</span></h1><p class="intro">找題目、讀詳解、看黑板教學。<br class="mobile-only">每個步驟都有理由。</p></div><div class="hero-board" aria-hidden="true"><span>先讀題</span><i>↓</i><span>想觀念</span><i>↓</i><strong>再動筆</strong><div class="chalkline"></div></div></section>
+ <main class="classroom">
+  <aside class="question-nav" aria-label="選題目">
+   <div class="nav-heading"><h2>今天想學哪一題？</h2><span id="total-count" class="count"></span></div>
+   <label for="paper">考卷份數</label><select id="paper"></select>
+   <label for="category">題目分類</label><select id="category"><option value="">全部分類</option></select>
+   <label for="search">搜尋觀念或題號</label><div class="search-wrap"><input id="search" type="search" placeholder="例如：根式、集合、第6題" autocomplete="off"><button id="clear-search" type="button" aria-label="清除搜尋">×</button></div>
+   <p id="results-count" role="status" class="results"></p>
+   <div id="question-list" class="question-list"></div>
+   <div id="empty" class="empty" hidden>沒有符合的題目。<br>換個關鍵字，或切換考卷試試。</div>
+  </aside>
+  <article id="lesson" class="lesson" tabindex="-1" aria-labelledby="lesson-title">
+   <div class="lesson-meta"><span id="lesson-category"></span><span id="lesson-number"></span></div>
+   <h2 id="lesson-title">正在整理題目…</h2>
+   <section class="problem-card" aria-labelledby="problem-label"><div class="section-caption"><span class="label" id="problem-label">題目</span><span>先試著自己想一想</span></div><div id="question" class="question math"></div><div class="problem-actions"><button type="button" id="show-solution" class="primary">看逐步詳解 <span aria-hidden="true">↓</span></button><button type="button" id="show-video" class="secondary">看教學影片 <span aria-hidden="true">▶</span></button></div></section>
+   <details id="solution" class="solution"><summary>完整詳解 <span>觀念、算式與每一步的理由</span><b aria-hidden="true">＋</b></summary><div class="answer"><span>本題答案</span><strong id="answer" class="math"></strong></div><div id="solution-steps"></div></details>
+   <section id="video-section" class="video-section" aria-labelledby="video-label"><div class="section-caption"><h3 id="video-label">跟著黑板一起學</h3><span id="duration"></span></div><div id="video-slot" class="video-slot"></div><a id="youtube-link" class="external" target="_blank" rel="noopener noreferrer" hidden>前往 YouTube 觀看 ↗</a></section>
+   <nav class="lesson-footer" aria-label="切換題目"><button id="previous" type="button" class="secondary">← 上一題</button><button id="copy-link" type="button" class="quiet">複製本題連結</button><button id="next" type="button" class="secondary">下一題 →</button></nav><p id="action-message" class="action-message" role="status"></p>
+  </article>
+ </main>
+ <footer class="site-footer"><span>解題阿福・數學逐題教室</span><span>不用趕，弄懂一步，就多會一步。</span></footer>
+ <noscript>請啟用 JavaScript，以查看各題的完整題目、逐步詳解與影片連結。</noscript>
+</body>
+</html>
