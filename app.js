@@ -24,21 +24,31 @@
   }
  }
  const unique=items=>[...new Set(items)];
- for(const n of unique(lessons.map(l=>l.paperSet)).sort())$('paper').append(new Option('考卷第'+n+'份',String(n)));
+ const paperLessons=n=>lessons.filter(l=>String(l.paperSet)===String(n));
+ const position=l=>paperLessons(l.paperSet).indexOf(l)+1;
+ for(const n of unique(lessons.map(l=>l.paperSet)).sort())$('paper').append(new Option('考卷第'+n+'份（共'+paperLessons(n).length+'題）',String(n)));
  for(const cat of unique(lessons.map(l=>l.category)))$('category').append(new Option(cat,cat));
  $('paper').value=String(lessons[0].paperSet);$('total-count').textContent=lessons.length+' 題・'+lessons.filter(l=>l.youtubeId).length+' 支影片';
  function normalize(s){return String(s).normalize('NFKC').toLowerCase().replaceAll(' ','');}
  function refreshList(){
   const search=normalize($('search').value);
-  filtered=lessons.filter(l=>String(l.paperSet)===$('paper').value&&(!$('category').value||l.category===$('category').value)&&(!search||normalize([l.topic,l.category,'第'+l.number+'題',...l.tags].join(' ')).includes(search)));
-  $('question-list').replaceChildren();$('results-count').textContent='找到 '+filtered.length+' 題';$('empty').hidden=filtered.length>0;
-  for(const l of filtered){const b=element('button','question-button');b.type='button';b.dataset.lesson=l.id;b.setAttribute('aria-label','第'+l.number+'題 '+l.topic+' '+l.category);b.append(element('span','q-number',String(l.number).padStart(2,'0')));const body=element('span','q-info');body.append(element('strong','',l.topic),element('small','',l.category));b.append(body,element('span','q-arrow','›'));b.addEventListener('click',()=>choose(l.id,true));$('question-list').append(b);}
+  const all=paperLessons($('paper').value),categories=unique(all.map(l=>l.category));
+  filtered=all.filter(l=>(!$('category').value||l.category===$('category').value)&&(!search||normalize([l.topic,l.category,'第'+position(l)+'題','原卷第'+l.number+'題',...l.tags].join(' ')).includes(search)));
+  $('paper-summary').textContent='本份共 '+all.length+' 題・'+all.filter(l=>l.youtubeId).length+' 支影片';
+  $('paper-parts').textContent=categories.map(cat=>cat+' '+all.filter(l=>l.category===cat).length+'題').join(' ＋ ');
+  $('question-list').replaceChildren();$('results-count').textContent='顯示 '+filtered.length+' 題／本份共 '+all.length+' 題';$('empty').hidden=filtered.length>0;
+  $('show-all').hidden=!$('category').value&&!search;$('show-all').textContent='顯示本份全部 '+all.length+' 題';
+  let lastCategory=null;
+  for(const l of filtered){
+   if(l.category!==lastCategory){const same=all.filter(x=>x.category===l.category),header=element('h3','question-group',l.category+'（'+same.length+'題）');header.append(element('small','','本份第'+position(same[0])+'～'+position(same[same.length-1])+'題'));$('question-list').append(header);lastCategory=l.category;}
+   const b=element('button','question-button');b.type='button';b.dataset.lesson=l.id;b.setAttribute('aria-label','本份第'+position(l)+'題，共'+all.length+'題 '+l.topic+' '+l.category+' 原卷第'+l.number+'題');b.append(element('span','q-number',String(position(l)).padStart(2,'0')));const body=element('span','q-info');body.append(element('strong','',l.topic),element('small','','原卷第'+l.number+'題'));b.append(body,element('span','q-arrow','›'));b.addEventListener('click',()=>choose(l.id,true));$('question-list').append(b);
+  }
   markSelected();
  }
- function markSelected(){for(const b of $('question-list').children){const active=b.dataset.lesson===current?.id;b.classList.toggle('selected',active);if(active)b.setAttribute('aria-current','true');else b.removeAttribute('aria-current');}}
+ function markSelected(){for(const b of $('question-list').querySelectorAll('button')){const active=b.dataset.lesson===current?.id;b.classList.toggle('selected',active);if(active)b.setAttribute('aria-current','true');else b.removeAttribute('aria-current');}}
  function choose(id,scroll=false){
   const l=lessons.find(l=>l.id===id);if(!l)return;current=l;
-  $('lesson-category').textContent=l.category;$('lesson-number').textContent='考卷第'+l.paperSet+'份・第'+l.number+'題';$('lesson-title').textContent=l.topic;
+  $('lesson-category').textContent=l.category;$('lesson-number').textContent='考卷第'+l.paperSet+'份・本份第'+position(l)+'題／共'+paperLessons(l.paperSet).length+'題';$('lesson-source').textContent='原卷第'+l.number+'題';$('lesson-title').textContent=l.topic;
   $('question').replaceChildren();markup(l.question,$('question'));$('answer').replaceChildren();markup(String(l.answer),$('answer'));
   $('solution').open=false;$('solution-steps').replaceChildren();
   let section=0;
@@ -57,7 +67,8 @@
   if(scroll){$('lesson').scrollIntoView({behavior:'smooth',block:'start'});$('lesson').focus({preventScroll:true});}
  }
  function changeFilter(){refreshList();if(filtered.length&&!filtered.includes(current))choose(filtered[0].id);}
- $('paper').addEventListener('change',changeFilter);$('category').addEventListener('change',changeFilter);$('search').addEventListener('input',refreshList);$('clear-search').addEventListener('click',()=>{$('search').value='';refreshList();$('search').focus();});
+ $('paper').addEventListener('change',()=>{$('category').value='';$('search').value='';changeFilter();});$('category').addEventListener('change',changeFilter);$('search').addEventListener('input',refreshList);$('clear-search').addEventListener('click',()=>{$('search').value='';refreshList();$('search').focus();});
+ $('show-all').addEventListener('click',()=>{$('category').value='';$('search').value='';refreshList();});
  $('show-solution').addEventListener('click',()=>{$('solution').open=true;$('solution').scrollIntoView({behavior:'smooth',block:'start'});});
  $('show-video').addEventListener('click',()=>$('video-section').scrollIntoView({behavior:'smooth',block:'start'}));
  function move(delta){const i=lessons.indexOf(current),next=lessons[i+delta];if(next){$('paper').value=String(next.paperSet);$('category').value='';$('search').value='';refreshList();choose(next.id,true);}}

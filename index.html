@@ -15,14 +15,15 @@
   <aside class="question-nav" aria-label="選題目">
    <div class="nav-heading"><h2>今天想學哪一題？</h2><span id="total-count" class="count"></span></div>
    <label for="paper">考卷份數</label><select id="paper"></select>
+   <p id="paper-summary" class="paper-summary"></p><p id="paper-parts" class="paper-parts"></p>
    <label for="category">題目分類</label><select id="category"><option value="">全部分類</option></select>
    <label for="search">搜尋觀念或題號</label><div class="search-wrap"><input id="search" type="search" placeholder="例如：根式、集合、第6題" autocomplete="off"><button id="clear-search" type="button" aria-label="清除搜尋">×</button></div>
-   <p id="results-count" role="status" class="results"></p>
+   <p id="results-count" role="status" class="results"></p><button id="show-all" class="show-all" type="button" hidden></button>
    <div id="question-list" class="question-list"></div>
    <div id="empty" class="empty" hidden>沒有符合的題目。<br>換個關鍵字，或切換考卷試試。</div>
   </aside>
   <article id="lesson" class="lesson" tabindex="-1" aria-labelledby="lesson-title">
-   <div class="lesson-meta"><span id="lesson-category"></span><span id="lesson-number"></span></div>
+   <div class="lesson-meta"><span id="lesson-category"></span><span id="lesson-number"></span><span id="lesson-source"></span></div>
    <h2 id="lesson-title">正在整理題目…</h2>
    <section class="problem-card" aria-labelledby="problem-label"><div class="section-caption"><span class="label" id="problem-label">題目</span><span>先試著自己想一想</span></div><div id="question" class="question math"></div><div class="problem-actions"><button type="button" id="show-solution" class="primary">看逐步詳解 <span aria-hidden="true">↓</span></button><button type="button" id="show-video" class="secondary">看教學影片 <span aria-hidden="true">▶</span></button></div></section>
    <details id="solution" class="solution"><summary>完整詳解 <span>觀念、算式與每一步的理由</span><b aria-hidden="true">＋</b></summary><div class="answer"><span>本題答案</span><strong id="answer" class="math"></strong></div><div id="solution-steps"></div></details>
